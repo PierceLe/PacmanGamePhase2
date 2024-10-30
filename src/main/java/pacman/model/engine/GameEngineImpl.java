@@ -11,6 +11,7 @@ import pacman.model.factories.ghosts.ClydeGhostFactory;
 import pacman.model.factories.ghosts.InkyGhostFactory;
 import pacman.model.factories.ghosts.PinkyGhostFactory;
 import pacman.model.factories.pellets.PelletFactory;
+import pacman.model.factories.pellets.PowerPelletFactory;
 import pacman.model.level.Level;
 import pacman.model.level.LevelImpl;
 import pacman.model.level.observer.LevelStateObserver;
@@ -53,6 +54,7 @@ public class GameEngineImpl implements GameEngine {
         renderableFactoryRegistry.registerFactory(RenderableType.DOWN_LEFT_WALL, new WallFactory(RenderableType.DOWN_LEFT_WALL));
         renderableFactoryRegistry.registerFactory(RenderableType.DOWN_RIGHT_WALL, new WallFactory(RenderableType.DOWN_RIGHT_WALL));
         renderableFactoryRegistry.registerFactory(RenderableType.PELLET, new PelletFactory());
+        renderableFactoryRegistry.registerFactory(RenderableType.POWER_PELLET, new PowerPelletFactory());
         renderableFactoryRegistry.registerFactory(RenderableType.PACMAN, new PacmanFactory());
         renderableFactoryRegistry.registerFactory(RenderableType.BLINKY, new BlinkyGhostFactory());
         renderableFactoryRegistry.registerFactory(RenderableType.PINKY, new PinkyGhostFactory());

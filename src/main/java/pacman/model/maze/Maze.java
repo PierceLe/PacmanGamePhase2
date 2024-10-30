@@ -71,7 +71,11 @@ public class Maze {
             }
             else if (renderableType == RenderableType.PELLET) {
                 this.pellets.add(renderable);
-            } else {
+            }
+            else if (renderableType == RenderableType.POWER_PELLET) {
+                this.pellets.add(renderable);
+            }
+            else {
                 this.isWall.put(formatCoordinates(x, y), true);
             }
             this.renderables.add(renderable);

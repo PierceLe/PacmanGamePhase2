@@ -12,9 +12,16 @@ import pacman.model.factories.RenderableFactory;
 /**
  * Concrete renderable factory for Pellet objects
  */
-public class PelletFactory implements RenderableFactory {
+public class PowerPelletFactory implements RenderableFactory {
     private static final Image PELLET_IMAGE = new Image("maze/pellet.png");
-    private static final int NUM_POINTS = 10;
+    private static final Image SCALED_PELLET_IMAGE = new Image(
+            "maze/pellet.png",
+            PELLET_IMAGE.getWidth() * 2,
+            PELLET_IMAGE.getHeight() * 2,
+            true,
+            true
+    );
+    private static final int NUM_POINTS = 50;
     private final Renderable.Layer layer = Renderable.Layer.BACKGROUND;
 
     @Override
@@ -22,17 +29,17 @@ public class PelletFactory implements RenderableFactory {
             Vector2D position
     ) {
         try {
-
+            position = position.add(new Vector2D(-7, -7));
             BoundingBox boundingBox = new BoundingBoxImpl(
                     position,
-                    PELLET_IMAGE.getHeight(),
-                    PELLET_IMAGE.getWidth()
+                    SCALED_PELLET_IMAGE.getHeight(),
+                    SCALED_PELLET_IMAGE.getWidth()
             );
 
             return new Pellet(
                     boundingBox,
                     layer,
-                    PELLET_IMAGE,
+                    SCALED_PELLET_IMAGE,
                     NUM_POINTS
             );
 
