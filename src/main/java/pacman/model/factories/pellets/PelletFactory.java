@@ -1,4 +1,4 @@
-package pacman.model.factories;
+package pacman.model.factories.pellets;
 
 import javafx.scene.image.Image;
 import pacman.ConfigurationParseException;
@@ -7,6 +7,7 @@ import pacman.model.entity.dynamic.physics.BoundingBox;
 import pacman.model.entity.dynamic.physics.BoundingBoxImpl;
 import pacman.model.entity.dynamic.physics.Vector2D;
 import pacman.model.entity.staticentity.collectable.Pellet;
+import pacman.model.factories.RenderableFactory;
 
 /**
  * Concrete renderable factory for Pellet objects
