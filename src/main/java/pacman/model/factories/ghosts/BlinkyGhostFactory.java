@@ -1,9 +1,11 @@
 package pacman.model.factories.ghosts;
 
 import javafx.scene.image.Image;
+import pacman.model.entity.dynamic.ghost.BlinkyGhost;
 import pacman.model.entity.dynamic.ghost.Ghost;
 import pacman.model.entity.dynamic.ghost.GhostImpl;
 import pacman.model.entity.dynamic.ghost.GhostMode;
+import pacman.model.entity.dynamic.ghost.chasestrategy.BlinkyChaseStrategy;
 import pacman.model.entity.dynamic.physics.Vector2D;
 
 public class BlinkyGhostFactory extends GhostFactory {
@@ -18,11 +20,12 @@ public class BlinkyGhostFactory extends GhostFactory {
 
     @Override
     public Ghost generateSpecificGhost(Vector2D position) {
-        return new GhostImpl(image
+        return new BlinkyGhost(image
                 ,generateBoundingBox(position)
                 ,generateKinematicState(position)
                 ,GhostMode.SCATTER
                 ,targetCorner
+                ,new BlinkyChaseStrategy()
         );
     }
 }

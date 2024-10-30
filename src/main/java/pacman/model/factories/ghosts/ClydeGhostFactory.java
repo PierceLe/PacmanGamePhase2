@@ -1,9 +1,10 @@
 package pacman.model.factories.ghosts;
 
 import javafx.scene.image.Image;
+import pacman.model.entity.dynamic.ghost.ClydeGhost;
 import pacman.model.entity.dynamic.ghost.Ghost;
-import pacman.model.entity.dynamic.ghost.GhostImpl;
 import pacman.model.entity.dynamic.ghost.GhostMode;
+import pacman.model.entity.dynamic.ghost.chasestrategy.ClydeChaseStrategy;
 import pacman.model.entity.dynamic.physics.Vector2D;
 
 public class ClydeGhostFactory extends GhostFactory {
@@ -18,11 +19,12 @@ public class ClydeGhostFactory extends GhostFactory {
 
     @Override
     public Ghost generateSpecificGhost(Vector2D position) {
-        return new GhostImpl(image
+        return new ClydeGhost(image
                 ,generateBoundingBox(position)
                 ,generateKinematicState(position)
                 ,GhostMode.SCATTER
                 ,targetCorner
+                , new ClydeChaseStrategy()
         );
     }
 }

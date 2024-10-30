@@ -2,8 +2,9 @@ package pacman.model.factories.ghosts;
 
 import javafx.scene.image.Image;
 import pacman.model.entity.dynamic.ghost.Ghost;
-import pacman.model.entity.dynamic.ghost.GhostImpl;
 import pacman.model.entity.dynamic.ghost.GhostMode;
+import pacman.model.entity.dynamic.ghost.InkyGhost;
+import pacman.model.entity.dynamic.ghost.chasestrategy.InkyChaseStrategy;
 import pacman.model.entity.dynamic.physics.Vector2D;
 
 public class InkyGhostFactory extends GhostFactory {
@@ -18,11 +19,12 @@ public class InkyGhostFactory extends GhostFactory {
 
     @Override
     public Ghost generateSpecificGhost(Vector2D position) {
-        return new GhostImpl(image
+        return new InkyGhost(image
                 ,generateBoundingBox(position)
                 ,generateKinematicState(position)
                 ,GhostMode.SCATTER
                 ,targetCorner
+                , new InkyChaseStrategy()
         );
     }
 }
