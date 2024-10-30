@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import pacman.model.entity.dynamic.ghost.Ghost;
 import pacman.model.entity.dynamic.ghost.GhostImpl;
 import pacman.model.entity.dynamic.ghost.GhostMode;
+import pacman.model.entity.dynamic.ghost.chasestrategy.PinkyChaseStrategy;
 import pacman.model.entity.dynamic.physics.Vector2D;
 
 public class PinkyGhostFactory extends GhostFactory {
@@ -23,6 +24,7 @@ public class PinkyGhostFactory extends GhostFactory {
                 ,generateKinematicState(position)
                 ,GhostMode.SCATTER
                 ,targetCorner
+                , new PinkyChaseStrategy()
         );
     }
 }

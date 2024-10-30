@@ -1,9 +1,15 @@
 package pacman.model.entity.dynamic.ghost;
 
 import pacman.model.entity.dynamic.DynamicEntity;
+import pacman.model.entity.dynamic.ghost.chasestrategy.ChaseStrategy;
+import pacman.model.entity.dynamic.ghost.state.GhostModeState;
+import pacman.model.entity.dynamic.physics.Direction;
+import pacman.model.entity.dynamic.physics.KinematicState;
+import pacman.model.entity.dynamic.physics.Vector2D;
 import pacman.model.entity.dynamic.player.observer.PlayerPositionObserver;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents Ghost entity in Pac-Man Game
@@ -22,4 +28,8 @@ public interface Ghost extends DynamicEntity, PlayerPositionObserver {
      * @param ghostMode mode of the Ghost
      */
     void setGhostMode(GhostMode ghostMode);
+
+    Vector2D getTargetCorner();
+
+    ChaseStrategy getChaseStrategy();
 }

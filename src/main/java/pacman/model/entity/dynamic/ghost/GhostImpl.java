@@ -2,6 +2,7 @@ package pacman.model.entity.dynamic.ghost;
 
 import javafx.scene.image.Image;
 import pacman.model.entity.Renderable;
+import pacman.model.entity.dynamic.ghost.chasestrategy.ChaseStrategy;
 import pacman.model.entity.dynamic.physics.*;
 import pacman.model.level.Level;
 import pacman.model.maze.Maze;
@@ -27,8 +28,9 @@ public class GhostImpl implements Ghost {
     private Set<Direction> possibleDirections;
     private Map<GhostMode, Double> speeds;
     private int currentDirectionCount = 0;
+    private ChaseStrategy chaseStrategy;
 
-    public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner) {
+    public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, ChaseStrategy chaseStrategy) {
         this.image = image;
         this.boundingBox = boundingBox;
         this.kinematicState = kinematicState;
@@ -38,6 +40,7 @@ public class GhostImpl implements Ghost {
         this.targetCorner = targetCorner;
         this.targetLocation = getTargetLocation();
         this.currentDirection = null;
+        this.chaseStrategy = chaseStrategy;
     }
 
     @Override
@@ -83,6 +86,7 @@ public class GhostImpl implements Ghost {
         return switch (this.ghostMode) {
             case CHASE -> this.playerPosition;
             case SCATTER -> this.targetCorner;
+            case FRIGHTENED -> new Vector2D(0, 0);
         };
     }
 
@@ -124,6 +128,16 @@ public class GhostImpl implements Ghost {
     }
 
     @Override
+    public Vector2D getTargetCorner() {
+        return targetCorner;
+    }
+
+    @Override
+    public ChaseStrategy getChaseStrategy() {
+        return chaseStrategy;
+    }
+
+    @Override
     public boolean collidesWith(Renderable renderable) {
         return boundingBox.collidesWith(kinematicState.getSpeed(), kinematicState.getDirection(), renderable.getBoundingBox());
     }
@@ -136,8 +150,9 @@ public class GhostImpl implements Ghost {
     }
 
     @Override
-    public void update(Vector2D playerPosition) {
-        this.playerPosition = playerPosition;
+    public void update(KinematicState playerKinematicSate) {
+
+        this.playerPosition = chaseStrategy.chasing(this, playerKinematicSate);
     }
 
     @Override
