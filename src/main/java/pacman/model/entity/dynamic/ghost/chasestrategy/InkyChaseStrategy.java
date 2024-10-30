@@ -12,7 +12,6 @@ public class InkyChaseStrategy implements ChaseStrategy {
 
     @Override
     public Vector2D chasing(Ghost ghost, KinematicState playerKinematicState) {
-        System.out.println(blinkyGhost);
         Vector2D pacmanPosition = convertToTileCoordinates(playerKinematicState.getPosition());
         Direction playerDirection = playerKinematicState.getDirection();
 

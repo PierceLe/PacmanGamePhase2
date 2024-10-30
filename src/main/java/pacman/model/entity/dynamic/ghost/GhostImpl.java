@@ -3,6 +3,9 @@ package pacman.model.entity.dynamic.ghost;
 import javafx.scene.image.Image;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.ghost.chasestrategy.ChaseStrategy;
+import pacman.model.entity.dynamic.ghost.state.FrightenedState;
+import pacman.model.entity.dynamic.ghost.state.GhostState;
+import pacman.model.entity.dynamic.ghost.state.RegularState;
 import pacman.model.entity.dynamic.physics.*;
 import pacman.model.level.Level;
 import pacman.model.maze.Maze;
@@ -14,7 +17,7 @@ import java.util.*;
  */
 public class GhostImpl implements Ghost {
 
-    private static final int minimumDirectionCount = 8;
+    public static final int minimumDirectionCount = 8;
     private final Layer layer = Layer.FOREGROUND;
     private final Image image;
     private final BoundingBox boundingBox;
@@ -30,6 +33,13 @@ public class GhostImpl implements Ghost {
     private int currentDirectionCount = 0;
     private ChaseStrategy chaseStrategy;
 
+    protected GhostState currentGhostState;
+
+    protected GhostState frightenedState;
+
+    protected GhostState regularState;
+    private int freezeCount = 0;
+
     public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, ChaseStrategy chaseStrategy) {
         this.image = image;
         this.boundingBox = boundingBox;
@@ -41,6 +51,11 @@ public class GhostImpl implements Ghost {
         this.targetLocation = getTargetLocation();
         this.currentDirection = null;
         this.chaseStrategy = chaseStrategy;
+
+
+        currentGhostState = new RegularState(this);
+        regularState = currentGhostState;  // Initially the ghost state is regular
+        frightenedState = new FrightenedState(this);
     }
 
     @Override
@@ -50,39 +65,28 @@ public class GhostImpl implements Ghost {
 
     @Override
     public Image getImage() {
+        if (currentGhostState == frightenedState) {
+            return frightenedState.getImage();
+        }
         return image;
     }
 
     @Override
     public void update() {
-        this.updateDirection();
-        this.kinematicState.update();
-        this.boundingBox.setTopLeft(this.kinematicState.getPosition());
+        if (freezeCount > 0) {
+            freezeCount--;
+            return;
+        }
+        currentGhostState.update();
     }
 
-    private void updateDirection() {
-        // Ghosts update their target location when they reach an intersection
-        if (Maze.isAtIntersection(this.possibleDirections)) {
-            this.targetLocation = getTargetLocation();
-        }
-
-        Direction newDirection = selectDirection(possibleDirections);
-
-        // Ghosts have to continue in a direction for a minimum time before changing direction
-        if (this.currentDirection != newDirection) {
-            this.currentDirectionCount = 0;
-        }
-        this.currentDirection = newDirection;
-
-        switch (currentDirection) {
-            case LEFT -> this.kinematicState.left();
-            case RIGHT -> this.kinematicState.right();
-            case UP -> this.kinematicState.up();
-            case DOWN -> this.kinematicState.down();
-        }
+    @Override
+    public void setFreezeCount(int duration){
+        freezeCount =  duration;
     }
 
-    private Vector2D getTargetLocation() {
+
+    public Vector2D getTargetLocation() {
         return switch (this.ghostMode) {
             case CHASE -> this.playerPosition;
             case SCATTER -> this.targetCorner;
@@ -90,34 +94,41 @@ public class GhostImpl implements Ghost {
         };
     }
 
-    private Direction selectDirection(Set<Direction> possibleDirections) {
-        if (possibleDirections.isEmpty()) {
-            return currentDirection;
-        }
+    @Override
+    public void setTargetLocation(Vector2D targetLocation) {
 
-        // ghosts have to continue in a direction for a minimum time before changing direction
-        if (currentDirection != null && currentDirectionCount < minimumDirectionCount) {
-            currentDirectionCount++;
-            return currentDirection;
-        }
-
-        Map<Direction, Double> distances = new HashMap<>();
-
-        for (Direction direction : possibleDirections) {
-            // ghosts never choose to reverse travel
-            if (currentDirection == null || direction != currentDirection.opposite()) {
-                distances.put(direction, Vector2D.calculateEuclideanDistance(this.kinematicState.getPotentialPosition(direction), this.targetLocation));
-            }
-        }
-
-        // only go the opposite way if trapped
-        if (distances.isEmpty()) {
-            return currentDirection.opposite();
-        }
-
-        // select the direction that will reach the target location fastest
-        return Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
+
+    @Override
+    public Set<Direction> getPossibleDirections() {
+        return possibleDirections;
+    }
+
+    @Override
+    public Direction getCurrentDirection() {
+        return currentDirection;
+    }
+
+    @Override
+    public void setCurrentDirectionCount(int currentDirectionCount) {
+        this.currentDirectionCount = currentDirectionCount;
+    }
+
+    @Override
+    public int getCurrentDirectionCount() {
+        return currentDirectionCount;
+    }
+
+    @Override
+    public void setCurrentDirection(Direction currentDirection) {
+        this.currentDirection = currentDirection;
+    }
+
+    @Override
+    public KinematicState getKinematicState() {
+        return this.kinematicState;
+    }
+
 
     @Override
     public void setGhostMode(GhostMode ghostMode) {
@@ -133,6 +144,26 @@ public class GhostImpl implements Ghost {
     }
 
     @Override
+    public GhostState getCurrentGhostState() {
+        return currentGhostState;
+    }
+
+    @Override
+    public GhostState getFrightenedState() {
+        return frightenedState;
+    }
+
+    @Override
+    public GhostState getRegularState() {
+        return regularState;
+    }
+
+    @Override
+    public void setState(GhostState state) {
+        currentGhostState = state;
+    }
+
+    @Override
     public ChaseStrategy getChaseStrategy() {
         return chaseStrategy;
     }
@@ -144,9 +175,7 @@ public class GhostImpl implements Ghost {
 
     @Override
     public void collideWith(Level level, Renderable renderable) {
-        if (level.isPlayer(renderable)) {
-            level.handleLoseLife();
-        }
+        currentGhostState.handleCollide(level, renderable);
     }
 
     @Override

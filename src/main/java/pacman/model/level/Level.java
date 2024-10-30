@@ -96,4 +96,10 @@ public interface Level extends LevelStateSubject {
      * Level will remove all dynamic entities from game.
      */
     void handleGameEnd();
+
+    int getStreakCount();
+
+    void incrementScore(int scoreIncremented);
+
+    void incrementGhostStreak();
 }
