@@ -6,6 +6,7 @@ import pacman.model.entity.dynamic.ghost.chasestrategy.ChaseStrategy;
 import pacman.model.entity.dynamic.ghost.state.FrightenedState;
 import pacman.model.entity.dynamic.ghost.state.GhostState;
 import pacman.model.entity.dynamic.ghost.state.RegularState;
+import pacman.model.entity.dynamic.ghost.state.StateRegistry;
 import pacman.model.entity.dynamic.physics.*;
 import pacman.model.level.Level;
 import pacman.model.maze.Maze;
@@ -32,13 +33,14 @@ public class GhostImpl implements Ghost {
     private Map<GhostMode, Double> speeds;
     private int currentDirectionCount = 0;
     private ChaseStrategy chaseStrategy;
+    private int freezeCount = 0;
 
-    protected GhostState currentGhostState;
+    private StateRegistry ghostStatesRegistry;
+    protected GhostMode currentGhostState;
 
     protected GhostState frightenedState;
-
     protected GhostState regularState;
-    private int freezeCount = 0;
+
 
     public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, ChaseStrategy chaseStrategy) {
         this.image = image;
@@ -52,10 +54,10 @@ public class GhostImpl implements Ghost {
         this.currentDirection = null;
         this.chaseStrategy = chaseStrategy;
 
-
-        currentGhostState = new RegularState(this);
-        regularState = currentGhostState;  // Initially the ghost state is regular
-        frightenedState = new FrightenedState(this);
+        this.ghostStatesRegistry = new StateRegistry(this);
+        currentGhostState = GhostMode.SCATTER;
+//        regularState = new RegularState(this);
+//        frightenedState = new FrightenedState(this);
     }
 
     @Override
@@ -65,8 +67,8 @@ public class GhostImpl implements Ghost {
 
     @Override
     public Image getImage() {
-        if (currentGhostState == frightenedState) {
-            return frightenedState.getImage();
+        if (ghostStatesRegistry.getGhostState(currentGhostState) instanceof FrightenedState) {
+            return ghostStatesRegistry.getGhostState(currentGhostState).getImage();
         }
         return image;
     }
@@ -77,7 +79,7 @@ public class GhostImpl implements Ghost {
             freezeCount--;
             return;
         }
-        currentGhostState.update();
+        ghostStatesRegistry.getGhostState(currentGhostState).update();
     }
 
     @Override
@@ -145,22 +147,22 @@ public class GhostImpl implements Ghost {
 
     @Override
     public GhostState getCurrentGhostState() {
-        return currentGhostState;
+        return ghostStatesRegistry.getGhostState(currentGhostState);
     }
 
     @Override
     public GhostState getFrightenedState() {
-        return frightenedState;
+        return ghostStatesRegistry.getGhostState(GhostMode.FRIGHTENED);
     }
+//
+//    @Override
+//    public GhostState getRegularState() {
+//        return ghostStatesRegistry.getGhostState(GhostMode.SCATTER);
+//    }
 
     @Override
-    public GhostState getRegularState() {
-        return regularState;
-    }
-
-    @Override
-    public void setState(GhostState state) {
-        currentGhostState = state;
+    public void setState(GhostMode ghostMode) {
+        currentGhostState = ghostMode;
     }
 
     @Override
@@ -175,7 +177,7 @@ public class GhostImpl implements Ghost {
 
     @Override
     public void collideWith(Level level, Renderable renderable) {
-        currentGhostState.handleCollide(level, renderable);
+        ghostStatesRegistry.getGhostState(currentGhostState).handleCollide(level, renderable);
     }
 
     @Override

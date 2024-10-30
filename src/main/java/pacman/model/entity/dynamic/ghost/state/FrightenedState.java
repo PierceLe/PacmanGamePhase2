@@ -64,7 +64,7 @@ public class FrightenedState implements GhostState{
     public void resetCurrentStateAndTransist() {
         this.duration = DURATION;
         ghost.setGhostMode(GhostMode.SCATTER);
-        ghost.setState(ghost.getRegularState());
+        ghost.setState(GhostMode.SCATTER);
 
     }
 

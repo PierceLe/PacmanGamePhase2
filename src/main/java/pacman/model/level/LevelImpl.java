@@ -228,7 +228,7 @@ public class LevelImpl implements Level {
             }
             for (Ghost ghost : ghosts) {
                 ghost.setGhostMode(GhostMode.SCATTER);
-                ghost.setState(ghost.getRegularState());
+                ghost.setState(GhostMode.SCATTER);
             }
             setNumLives(numLives - 1);
             setGameState(GameState.READY);

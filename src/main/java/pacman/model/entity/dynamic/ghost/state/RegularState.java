@@ -45,7 +45,7 @@ public class RegularState implements GhostState {
     }
     @Override
     public void resetCurrentStateAndTransist(){
-        ghost.setState(ghost.getFrightenedState());
+        ghost.setState(GhostMode.FRIGHTENED);
         ghost.setGhostMode(GhostMode.FRIGHTENED);
     }
 
