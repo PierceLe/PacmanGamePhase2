@@ -5,19 +5,21 @@ import org.json.simple.JSONObject;
 import pacman.model.engine.observer.GameState;
 import pacman.model.engine.observer.GameStateObserver;
 import pacman.model.entity.Renderable;
-import pacman.model.entity.dynamic.physics.Direction;
 import pacman.model.factories.*;
+import pacman.model.factories.ghosts.BlinkyGhostFactory;
+import pacman.model.factories.ghosts.ClydeGhostFactory;
+import pacman.model.factories.ghosts.InkyGhostFactory;
+import pacman.model.factories.ghosts.PinkyGhostFactory;
+import pacman.model.factories.pellets.PelletFactory;
+import pacman.model.factories.pellets.PowerPelletFactory;
 import pacman.model.level.Level;
 import pacman.model.level.LevelImpl;
 import pacman.model.level.observer.LevelStateObserver;
 import pacman.model.maze.Maze;
 import pacman.model.maze.MazeCreator;
-import pacman.view.keyboard.command.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Implementation of GameEngine - responsible for coordinating the Pac-Man model
@@ -52,8 +54,12 @@ public class GameEngineImpl implements GameEngine {
         renderableFactoryRegistry.registerFactory(RenderableType.DOWN_LEFT_WALL, new WallFactory(RenderableType.DOWN_LEFT_WALL));
         renderableFactoryRegistry.registerFactory(RenderableType.DOWN_RIGHT_WALL, new WallFactory(RenderableType.DOWN_RIGHT_WALL));
         renderableFactoryRegistry.registerFactory(RenderableType.PELLET, new PelletFactory());
+        renderableFactoryRegistry.registerFactory(RenderableType.POWER_PELLET, new PowerPelletFactory());
         renderableFactoryRegistry.registerFactory(RenderableType.PACMAN, new PacmanFactory());
-        renderableFactoryRegistry.registerFactory(RenderableType.GHOST, new GhostFactory());
+        renderableFactoryRegistry.registerFactory(RenderableType.BLINKY, new BlinkyGhostFactory());
+        renderableFactoryRegistry.registerFactory(RenderableType.PINKY, new PinkyGhostFactory());
+        renderableFactoryRegistry.registerFactory(RenderableType.INKY, new InkyGhostFactory());
+        renderableFactoryRegistry.registerFactory(RenderableType.CLYDE, new ClydeGhostFactory());
         return renderableFactoryRegistry;
     }
 
