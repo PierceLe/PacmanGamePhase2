@@ -21,5 +21,4 @@ public class StandardBackgroundDrawer implements BackgroundDrawer {
 
         pane.getChildren().add(background);
     }
-
 }
