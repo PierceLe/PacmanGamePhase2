@@ -38,11 +38,5 @@ public class NonFrightenedModeState implements GhostModeState {
         ghost.setGhostMode(GhostMode.FRIGHTENED);
     }
 
-    @Override
-    public void resetCurrentStateAndTransist(){
-        ghost.setState(GhostMode.FRIGHTENED);
-        ghost.setGhostMode(GhostMode.FRIGHTENED);
-    }
-
 
 }

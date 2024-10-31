@@ -26,7 +26,6 @@ public interface GhostModeState {
 
     void collectPowerPellets();
 
-    void resetCurrentStateAndTransist();
 
     default void updateDirection(Ghost ghost) {
         // Ghosts update their target location when they reach an intersection

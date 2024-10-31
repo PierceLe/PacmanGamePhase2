@@ -32,7 +32,9 @@ public class FrightenedModeState implements GhostModeState {
     public void handleCollision(Level level, Renderable renderable) {
         if (level.isPlayer(renderable)) {
             ghost.reset();
-            resetCurrentStateAndTransist();
+            this.duration = DURATION;
+            ghost.setGhostMode(GhostMode.SCATTER);
+            ghost.setState(GhostMode.SCATTER);
             ghost.playingRespawn();
             this.duration = DURATION;
             level.incrementGhostStreak();
@@ -46,7 +48,9 @@ public class FrightenedModeState implements GhostModeState {
     public void update() {
         System.out.println(duration);
         if (this.duration <= 0){
-            resetCurrentStateAndTransist();
+            this.duration = DURATION;
+            ghost.setGhostMode(GhostMode.SCATTER);
+            ghost.setState(GhostMode.SCATTER);
             return;
         }
         updateDirection(ghost);
@@ -56,20 +60,14 @@ public class FrightenedModeState implements GhostModeState {
     }
 
     @Override
-    public void resetCurrentStateAndTransist() {
+    public void collectPowerPellets() {
         this.duration = DURATION;
-        ghost.setGhostMode(GhostMode.SCATTER);
-        ghost.setState(GhostMode.SCATTER);
-
     }
+
 
     public void setDuration(double duration) {
         this.duration = duration;
         System.out.println(duration);
         DURATION = duration;
-    }
-
-    public void resetTickCount(){
-        this.duration = DURATION;
     }
 }

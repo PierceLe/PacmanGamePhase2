@@ -199,16 +199,10 @@ public class LevelImpl implements Level {
             this.currentGhostMode = GhostMode.FRIGHTENED;
             for (Ghost ghost : ghosts){
                 GhostModeState ghostCurrentState = ghost.getCurrentGhostState();
-                if (ghostCurrentState instanceof NonFrightenedModeState) {
-                    ghostCurrentState.resetCurrentStateAndTransist();
-                }
-                else {
-                    ((FrightenedModeState) ghostCurrentState).resetTickCount();
-                }
+                ghostCurrentState.collectPowerPellets();
             }
             ghostEatenStreak = 0;
             tickCount = 0;
-//            addEffectToPacman();
         }
         this.points += collectable.getPoints();
         notifyObserversWithScoreChange(collectable.getPoints());
