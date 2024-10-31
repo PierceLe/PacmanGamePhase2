@@ -37,6 +37,4 @@ public class NonFrightenedModeState implements GhostModeState {
         ghost.setState(GhostMode.FRIGHTENED);
         ghost.setGhostMode(GhostMode.FRIGHTENED);
     }
-
-
 }
