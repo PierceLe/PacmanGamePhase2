@@ -126,9 +126,7 @@ public class LevelImpl implements Level {
                 setGameState(GameState.IN_PROGRESS);
                 tickCount = 0;
             }
-
         } else {
-
             if (tickCount == modeLengths.get(currentGhostMode)) {
                 if (currentGhostMode == GhostMode.FRIGHTENED) {
 //                    removeEffectFromPacman();
@@ -139,7 +137,6 @@ public class LevelImpl implements Level {
                 for (Ghost ghost : this.ghosts) {
                     ghost.setGhostMode(this.currentGhostMode);
                 }
-
                 tickCount = 0;
             }
 
@@ -157,7 +154,6 @@ public class LevelImpl implements Level {
 
             for (int i = 0; i < dynamicEntities.size(); ++i) {
                 DynamicEntity dynamicEntityA = dynamicEntities.get(i);
-
                 // handle collisions between dynamic entities
                 for (int j = i + 1; j < dynamicEntities.size(); ++j) {
                     DynamicEntity dynamicEntityB = dynamicEntities.get(j);
@@ -324,7 +320,7 @@ public class LevelImpl implements Level {
 
     @Override
     public void incrementGhostStreak() {
-        if (ghostEatenStreak == ghosts.size()) ghostEatenStreak = 0;
         this.ghostEatenStreak += 1;
+        if (ghostEatenStreak == ghosts.size()) ghostEatenStreak = 0;
     }
 }

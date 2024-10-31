@@ -94,7 +94,7 @@ public class GhostImpl implements Ghost {
 
     @Override
     public void setTargetLocation(Vector2D targetLocation) {
-
+        this.targetLocation = targetLocation;
     }
 
     @Override
@@ -174,7 +174,6 @@ public class GhostImpl implements Ghost {
 
     @Override
     public void update(KinematicState playerKinematicSate) {
-
         this.playerPosition = chaseStrategy.chasing(this, playerKinematicSate);
     }
 
