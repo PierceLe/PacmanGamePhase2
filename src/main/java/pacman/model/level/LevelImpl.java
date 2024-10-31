@@ -6,13 +6,12 @@ import pacman.model.engine.observer.GameState;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.DynamicEntity;
 import pacman.model.entity.dynamic.ghost.Ghost;
-import pacman.model.entity.dynamic.ghost.GhostImpl;
 import pacman.model.entity.dynamic.ghost.GhostMode;
 import pacman.model.entity.dynamic.ghost.chasestrategy.BlinkyChaseStrategy;
 import pacman.model.entity.dynamic.ghost.chasestrategy.InkyChaseStrategy;
-import pacman.model.entity.dynamic.ghost.state.FrightenedState;
-import pacman.model.entity.dynamic.ghost.state.GhostState;
-import pacman.model.entity.dynamic.ghost.state.RegularState;
+import pacman.model.entity.dynamic.ghost.state.FrightenedModeState;
+import pacman.model.entity.dynamic.ghost.state.GhostModeState;
+import pacman.model.entity.dynamic.ghost.state.NonFrightenedModeState;
 import pacman.model.entity.dynamic.physics.PhysicsEngine;
 import pacman.model.entity.dynamic.player.Controllable;
 import pacman.model.entity.dynamic.player.Pacman;
@@ -73,9 +72,11 @@ public class LevelImpl implements Level {
         this.player = (Controllable) maze.getControllable();
         this.player.setSpeed(levelConfigurationReader.getPlayerSpeed());
         setNumLives(maze.getNumLives());
+
+        // Set up collectables
+        this.collectables = new ArrayList<>(maze.getPellets());
         this.modeLengths = levelConfigurationReader.getGhostModeLengths();
-        System.out.println(modeLengths);
-        System.out.println(modeLengths.keySet().size());
+
         // Set up ghosts
         this.ghosts = maze.getGhosts().stream()
                 .map(element -> (Ghost) element)
@@ -85,28 +86,22 @@ public class LevelImpl implements Level {
         for (Ghost ghost : ghosts) {
             if (ghost.getChaseStrategy() instanceof BlinkyChaseStrategy) {
                 blinkyGhost = ghost;
+                break;
             }
-            FrightenedState frightenedState = (FrightenedState) ghost.getFrightenedState();
-            frightenedState.setDuration(modeLengths.get(GhostMode.FRIGHTENED));
         }
-
         for (Ghost ghost : ghosts) {
             if (ghost.getChaseStrategy() instanceof InkyChaseStrategy) {
                 InkyChaseStrategy inkyChaseStrategy = (InkyChaseStrategy) ghost.getChaseStrategy();
                 inkyChaseStrategy.setBlinkyGhost(ghost);
-                break;
             }
+            FrightenedModeState frightenedState = (FrightenedModeState) ghost.getFrightenedState();
+            frightenedState.setDuration(modeLengths.get(GhostMode.FRIGHTENED));
         }
-
         for (Ghost ghost : this.ghosts) {
             player.registerObserver(ghost);
             ghost.setSpeeds(ghostSpeeds);
             ghost.setGhostMode(this.currentGhostMode);
         }
-
-        // Set up collectables
-        this.collectables = new ArrayList<>(maze.getPellets());
-
     }
 
     @Override
@@ -203,12 +198,12 @@ public class LevelImpl implements Level {
         if (collectable.getPoints() == 50) {
             this.currentGhostMode = GhostMode.FRIGHTENED;
             for (Ghost ghost : ghosts){
-                GhostState ghostCurrentState = ghost.getCurrentGhostState();
-                if (ghostCurrentState instanceof RegularState) {
+                GhostModeState ghostCurrentState = ghost.getCurrentGhostState();
+                if (ghostCurrentState instanceof NonFrightenedModeState) {
                     ghostCurrentState.resetCurrentStateAndTransist();
                 }
                 else {
-                    ((FrightenedState) ghostCurrentState).resetTickCount();
+                    ((FrightenedModeState) ghostCurrentState).resetTickCount();
                 }
             }
             ghostEatenStreak = 0;

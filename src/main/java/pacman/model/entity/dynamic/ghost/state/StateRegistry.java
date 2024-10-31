@@ -6,17 +6,17 @@ import pacman.model.entity.dynamic.ghost.GhostMode;
 import java.util.HashMap;
 
 public class StateRegistry {
-    private HashMap<GhostMode, GhostState> statesRegistry = new HashMap<>();
+    private final HashMap<GhostMode, GhostModeState> statesRegistry = new HashMap<>();
     public StateRegistry(Ghost ghost) {
-        registerGhostState(GhostMode.FRIGHTENED, new FrightenedState(ghost));
-        registerGhostState(GhostMode.SCATTER, new RegularState(ghost));
+        registerGhostState(GhostMode.FRIGHTENED, new FrightenedModeState(ghost));
+        registerGhostState(GhostMode.SCATTER, new NonFrightenedModeState(ghost));
     }
 
-    public GhostState getGhostState(GhostMode ghostMode) {
+    public GhostModeState getGhostState(GhostMode ghostMode) {
         return statesRegistry.get(ghostMode);
     }
 
-    private void registerGhostState(GhostMode ghostMode, GhostState ghostState) {
+    private void registerGhostState(GhostMode ghostMode, GhostModeState ghostState) {
         statesRegistry.put(ghostMode, ghostState);
     }
 }

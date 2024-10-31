@@ -4,61 +4,37 @@ package pacman.model.entity.dynamic.ghost.state;
 import javafx.scene.image.Image;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.ghost.Ghost;
-import pacman.model.entity.dynamic.ghost.GhostMode;
 import pacman.model.entity.dynamic.physics.Direction;
 import pacman.model.entity.dynamic.physics.KinematicState;
 import pacman.model.entity.dynamic.physics.Vector2D;
-import pacman.model.entity.dynamic.player.Pacman;
 import pacman.model.level.Level;
 import pacman.model.maze.Maze;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static pacman.model.entity.dynamic.ghost.GhostImpl.minimumDirectionCount;
 
 
-public class RegularState implements GhostState {
-    private final Ghost ghost;
+public interface GhostModeState {
+    Image getImage();
 
-    public RegularState(Ghost ghost){
-        this.ghost = ghost;
-    }
-    @Override
-    public Image getImage() {
-        return ghost.getImage();
-    }
 
-    @Override
-    public void handleCollide(Level level, Renderable entity) {
-        if (level.isPlayer(entity)) {
-            level.handleLoseLife();
-        }
-    }
-    @Override
-    public void update() {
-        this.updateDirection();
-        ghost.getKinematicState().update();
-        ghost.getBoundingBox().setTopLeft(ghost.getKinematicState().getPosition());
-    }
-    @Override
-    public void resetCurrentStateAndTransist(){
-        ghost.setState(GhostMode.FRIGHTENED);
-        ghost.setGhostMode(GhostMode.FRIGHTENED);
-    }
+    void handleCollision(Level level, Renderable renderable);
 
-    /**
-     * Update the direction for corresponding state, in regular state, ghost will behave default
-     */
-    private void updateDirection() {
+
+    void update();
+
+    void collectPowerPellets();
+
+    void resetCurrentStateAndTransist();
+
+    default void updateDirection(Ghost ghost) {
         // Ghosts update their target location when they reach an intersection
         if (Maze.isAtIntersection(ghost.getPossibleDirections())) {
             ghost.setTargetLocation(ghost.getTargetLocation());
         }
 
-        Direction newDirection = selectDirection(ghost.getPossibleDirections());
+        Direction newDirection = selectDirection(ghost.getPossibleDirections(), ghost);
 
         // Ghosts have to continue in a direction for a minimum time before changing direction
         if (ghost.getCurrentDirection() != newDirection) {
@@ -75,12 +51,7 @@ public class RegularState implements GhostState {
         }
     }
 
-    /**
-     * Select the direction for the ghost to move in
-     * @param possibleDirections, all possible directions for the ghost to move in
-     * @return a direction for the ghost to move in
-     */
-    private Direction selectDirection(Set<Direction> possibleDirections) {
+    default Direction selectDirection(Set<Direction> possibleDirections, Ghost ghost) {
         if (possibleDirections.isEmpty()) {
             return ghost.getCurrentDirection();
         }
@@ -106,8 +77,10 @@ public class RegularState implements GhostState {
             return currentDirection.opposite();
         }
 
-        // select the direction that will reach the target location fastest
-        return Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
+        if (this instanceof NonFrightenedModeState) {
+            return Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
+        }
+        List<Direction> directions = new ArrayList<>(distances.keySet());
+        return directions.get(new Random().nextInt(directions.size()));
     }
-
 }

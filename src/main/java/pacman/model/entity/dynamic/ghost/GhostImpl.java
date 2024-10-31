@@ -3,13 +3,11 @@ package pacman.model.entity.dynamic.ghost;
 import javafx.scene.image.Image;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.ghost.chasestrategy.ChaseStrategy;
-import pacman.model.entity.dynamic.ghost.state.FrightenedState;
-import pacman.model.entity.dynamic.ghost.state.GhostState;
-import pacman.model.entity.dynamic.ghost.state.RegularState;
+import pacman.model.entity.dynamic.ghost.state.FrightenedModeState;
+import pacman.model.entity.dynamic.ghost.state.GhostModeState;
 import pacman.model.entity.dynamic.ghost.state.StateRegistry;
 import pacman.model.entity.dynamic.physics.*;
 import pacman.model.level.Level;
-import pacman.model.maze.Maze;
 
 import java.util.*;
 
@@ -19,6 +17,7 @@ import java.util.*;
 public class GhostImpl implements Ghost {
 
     public static final int minimumDirectionCount = 8;
+    private static final int RESPAWN_TIME = 50;
     private final Layer layer = Layer.FOREGROUND;
     private final Image image;
     private final BoundingBox boundingBox;
@@ -32,14 +31,12 @@ public class GhostImpl implements Ghost {
     private Set<Direction> possibleDirections;
     private Map<GhostMode, Double> speeds;
     private int currentDirectionCount = 0;
-    private ChaseStrategy chaseStrategy;
-    private int freezeCount = 0;
-
-    private StateRegistry ghostStatesRegistry;
+    private final ChaseStrategy chaseStrategy;
+    private int respawning = 0;
     protected GhostMode currentGhostState;
+    private final StateRegistry ghostStatesRegistry;
 
-    protected GhostState frightenedState;
-    protected GhostState regularState;
+
 
 
     public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, ChaseStrategy chaseStrategy) {
@@ -53,11 +50,9 @@ public class GhostImpl implements Ghost {
         this.targetLocation = getTargetLocation();
         this.currentDirection = null;
         this.chaseStrategy = chaseStrategy;
-
-        this.ghostStatesRegistry = new StateRegistry(this);
         currentGhostState = GhostMode.SCATTER;
-//        regularState = new RegularState(this);
-//        frightenedState = new FrightenedState(this);
+        this.ghostStatesRegistry = new StateRegistry(this);
+
     }
 
     @Override
@@ -66,8 +61,9 @@ public class GhostImpl implements Ghost {
     }
 
     @Override
+    // State pattern
     public Image getImage() {
-        if (ghostStatesRegistry.getGhostState(currentGhostState) instanceof FrightenedState) {
+        if (ghostStatesRegistry.getGhostState(currentGhostState) instanceof FrightenedModeState) {
             return ghostStatesRegistry.getGhostState(currentGhostState).getImage();
         }
         return image;
@@ -75,24 +71,24 @@ public class GhostImpl implements Ghost {
 
     @Override
     public void update() {
-        if (freezeCount > 0) {
-            freezeCount--;
+        if (respawning > 0) {
+            respawning = respawning - 1;
             return;
         }
         ghostStatesRegistry.getGhostState(currentGhostState).update();
     }
 
     @Override
-    public void setFreezeCount(int duration){
-        freezeCount =  duration;
+    public void playingRespawn() {
+        respawning = RESPAWN_TIME;
     }
 
-
+    @Override
     public Vector2D getTargetLocation() {
         return switch (this.ghostMode) {
             case CHASE -> this.playerPosition;
             case SCATTER -> this.targetCorner;
-            case FRIGHTENED -> new Vector2D(0, 0);
+            case FRIGHTENED -> new Vector2D(5, 5);
         };
     }
 
@@ -146,19 +142,15 @@ public class GhostImpl implements Ghost {
     }
 
     @Override
-    public GhostState getCurrentGhostState() {
+    public GhostModeState getCurrentGhostState() {
         return ghostStatesRegistry.getGhostState(currentGhostState);
     }
 
     @Override
-    public GhostState getFrightenedState() {
+    public GhostModeState getFrightenedState() {
         return ghostStatesRegistry.getGhostState(GhostMode.FRIGHTENED);
     }
-//
-//    @Override
-//    public GhostState getRegularState() {
-//        return ghostStatesRegistry.getGhostState(GhostMode.SCATTER);
-//    }
+
 
     @Override
     public void setState(GhostMode ghostMode) {
@@ -177,7 +169,7 @@ public class GhostImpl implements Ghost {
 
     @Override
     public void collideWith(Level level, Renderable renderable) {
-        ghostStatesRegistry.getGhostState(currentGhostState).handleCollide(level, renderable);
+        ghostStatesRegistry.getGhostState(currentGhostState).handleCollision(level, renderable);
     }
 
     @Override
