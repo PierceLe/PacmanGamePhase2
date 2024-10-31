@@ -44,7 +44,6 @@ public class FrightenedModeState implements GhostModeState {
     }
     @Override
     public void update() {
-        System.out.println(duration);
         if (this.duration <= 0){
             this.duration = MODE_LENGTH;
             ghost.setGhostMode(GhostMode.SCATTER);
