@@ -10,14 +10,13 @@ import static java.lang.Math.pow;
 /**
  * Concrete class for FrightenedState
  */
-
 public class FrightenedModeState implements GhostModeState {
     private final Ghost ghost;
-    private static double DURATION = 0;
+    private static double MODE_LENGTH = 0;
     private double duration;
-    private static final int SCALING_POINT = 100;
+    private static final int POINT = 100;
 
-    private final Image frightenedImage =  new Image("maze/ghosts/frightened.png");
+    private final Image image =  new Image("maze/ghosts/frightened.png");
 
     public FrightenedModeState(Ghost ghost){
         this.ghost = ghost;
@@ -25,30 +24,29 @@ public class FrightenedModeState implements GhostModeState {
 
     @Override
     public Image getImage() {
-        return frightenedImage;
+        return image;
     }
 
     @Override
     public void handleCollision(Level level, Renderable renderable) {
         if (level.isPlayer(renderable)) {
             ghost.reset();
-            this.duration = DURATION;
+            this.duration = MODE_LENGTH;
             ghost.setGhostMode(GhostMode.SCATTER);
             ghost.setState(GhostMode.SCATTER);
             ghost.playingRespawn();
-            this.duration = DURATION;
+            this.duration = MODE_LENGTH;
             level.incrementGhostStreak();
             int streak = level.getStreakCount();
             int base = (int) pow(2, streak);
-            System.out.println("Score: " + base * SCALING_POINT);
-            level.incrementScore(base * SCALING_POINT);
+            level.incrementScore(base * POINT);
         }
     }
     @Override
     public void update() {
         System.out.println(duration);
         if (this.duration <= 0){
-            this.duration = DURATION;
+            this.duration = MODE_LENGTH;
             ghost.setGhostMode(GhostMode.SCATTER);
             ghost.setState(GhostMode.SCATTER);
             return;
@@ -61,13 +59,13 @@ public class FrightenedModeState implements GhostModeState {
 
     @Override
     public void collectPowerPellets() {
-        this.duration = DURATION;
+        this.duration = MODE_LENGTH;
     }
 
 
-    public void setDuration(double duration) {
-        this.duration = duration;
-        System.out.println(duration);
-        DURATION = duration;
+    public void setModeLength(double modeLength) {
+        this.duration = modeLength;
+        System.out.println(modeLength);
+        MODE_LENGTH = modeLength;
     }
 }

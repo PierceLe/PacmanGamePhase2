@@ -11,7 +11,6 @@ import pacman.model.entity.dynamic.ghost.chasestrategy.BlinkyChaseStrategy;
 import pacman.model.entity.dynamic.ghost.chasestrategy.InkyChaseStrategy;
 import pacman.model.entity.dynamic.ghost.state.FrightenedModeState;
 import pacman.model.entity.dynamic.ghost.state.GhostModeState;
-import pacman.model.entity.dynamic.ghost.state.NonFrightenedModeState;
 import pacman.model.entity.dynamic.physics.PhysicsEngine;
 import pacman.model.entity.dynamic.player.Controllable;
 import pacman.model.entity.dynamic.player.Pacman;
@@ -95,7 +94,7 @@ public class LevelImpl implements Level {
                 inkyChaseStrategy.setBlinkyGhost(ghost);
             }
             FrightenedModeState frightenedState = (FrightenedModeState) ghost.getFrightenedState();
-            frightenedState.setDuration(modeLengths.get(GhostMode.FRIGHTENED));
+            frightenedState.setModeLength(modeLengths.get(GhostMode.FRIGHTENED));
         }
         for (Ghost ghost : this.ghosts) {
             player.registerObserver(ghost);
