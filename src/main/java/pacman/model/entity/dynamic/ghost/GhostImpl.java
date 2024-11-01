@@ -17,7 +17,7 @@ import java.util.*;
 public class GhostImpl implements Ghost {
 
     public static final int minimumDirectionCount = 8;
-    private static final int RESPAWN_TIME = 50;
+    private static final int RESPAWN_TIME = 30;
     private final Layer layer = Layer.FOREGROUND;
     private final Image image;
     private final BoundingBox boundingBox;

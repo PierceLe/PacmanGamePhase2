@@ -1,8 +1,11 @@
-package pacman.model.entity.dynamic.player;
+package pacman.model.entity.dynamic.player.decorator;
 
 import javafx.scene.image.Image;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.physics.*;
+import pacman.model.entity.dynamic.player.Controllable;
+import pacman.model.entity.dynamic.player.MovementInvoker;
+import pacman.model.entity.dynamic.player.PacmanVisual;
 import pacman.model.entity.dynamic.player.observer.PlayerPositionObserver;
 import pacman.model.entity.dynamic.player.observer.PlayerPositionSubject;
 import pacman.model.entity.staticentity.collectable.Collectable;
@@ -12,7 +15,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class Pacman implements Controllable, PlayerPositionSubject {
+public class ConcretePacmanComponent implements Controllable, PlayerPositionSubject, PacmanComponent {
 
     public static final int PACMAN_IMAGE_SWAP_TICK_COUNT = 8;
     private final Layer layer = Layer.FOREGROUND;
@@ -26,7 +29,7 @@ public class Pacman implements Controllable, PlayerPositionSubject {
     private Set<Direction> possibleDirections;
     private boolean isClosedImage;
 
-    public Pacman(
+    public ConcretePacmanComponent(
             Image currentImage,
             Map<PacmanVisual, Image> images,
             BoundingBox boundingBox,
@@ -186,5 +189,10 @@ public class Pacman implements Controllable, PlayerPositionSubject {
     @Override
     public void switchImage() {
         this.isClosedImage = !this.isClosedImage;
+    }
+
+    @Override
+    public ConcretePacmanComponent getPacman() {
+        return this;
     }
 }

@@ -49,7 +49,6 @@ public class MazeCreator {
 
                     maze.addRenderable(renderable, renderableType, x, y);
                 }
-
                 y += 1;
             }
 
@@ -58,7 +57,6 @@ public class MazeCreator {
             System.out.println("No maze file was found.");
             exit(0);
         }
-
         return maze;
     }
 }

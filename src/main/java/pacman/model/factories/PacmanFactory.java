@@ -4,7 +4,7 @@ import javafx.scene.image.Image;
 import pacman.ConfigurationParseException;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.physics.*;
-import pacman.model.entity.dynamic.player.Pacman;
+import pacman.model.entity.dynamic.player.decorator.ConcretePacmanComponent;
 import pacman.model.entity.dynamic.player.PacmanVisual;
 
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class PacmanFactory implements RenderableFactory {
                     .setDirection(Direction.LEFT)
                     .build();
 
-            return new Pacman(
+            return new ConcretePacmanComponent(
                     currentImage,
                     images,
                     boundingBox,

@@ -13,7 +13,9 @@ import pacman.model.entity.dynamic.ghost.state.FrightenedModeState;
 import pacman.model.entity.dynamic.ghost.state.GhostModeState;
 import pacman.model.entity.dynamic.physics.PhysicsEngine;
 import pacman.model.entity.dynamic.player.Controllable;
-import pacman.model.entity.dynamic.player.Pacman;
+import pacman.model.entity.dynamic.player.decorator.ConcretePacmanComponent;
+import pacman.model.entity.dynamic.player.decorator.ConcretePacmanDecorator;
+import pacman.model.entity.dynamic.player.decorator.PacmanComponent;
 import pacman.model.entity.staticentity.StaticEntity;
 import pacman.model.entity.staticentity.collectable.Collectable;
 import pacman.model.level.observer.LevelStateObserver;
@@ -59,6 +61,7 @@ public class LevelImpl implements Level {
 
         initLevel(new LevelConfigurationReader(levelConfiguration));
     }
+
 
     private void initLevel(LevelConfigurationReader levelConfigurationReader) {
         // Fetch all renderables for the level
@@ -128,6 +131,7 @@ public class LevelImpl implements Level {
         } else {
             if (tickCount == modeLengths.get(currentGhostMode)) {
                 if (currentGhostMode == GhostMode.FRIGHTENED) {
+                    deactivatePowerPelletEffect((ConcretePacmanDecorator) player);
                     eatenStreak = 0;
                 }
                 // update ghost mode
@@ -138,7 +142,7 @@ public class LevelImpl implements Level {
                 tickCount = 0;
             }
 
-            if (tickCount % Pacman.PACMAN_IMAGE_SWAP_TICK_COUNT == 0) {
+            if (tickCount % ConcretePacmanComponent.PACMAN_IMAGE_SWAP_TICK_COUNT == 0) {
                 this.player.switchImage();
             }
 
@@ -194,6 +198,7 @@ public class LevelImpl implements Level {
                 GhostModeState ghostCurrentState = ghost.getCurrentGhostState();
                 ghostCurrentState.collectPowerPellets();
             }
+            activatePowerPelletEffect((PacmanComponent) player);
             eatenStreak = 0;
             tickCount = 0;
         }
@@ -322,5 +327,18 @@ public class LevelImpl implements Level {
             eatenStreak = 0;
         }
         this.eatenStreak += 1;
+    }
+
+    public void activatePowerPelletEffect(PacmanComponent wrappedPlayer) {
+        renderables.remove(player);
+        player = new ConcretePacmanDecorator(wrappedPlayer);
+        renderables.add(player);
+    }
+
+    public void deactivatePowerPelletEffect(ConcretePacmanDecorator pacman) {
+        Controllable normalPlayer = pacman.getPacman();
+        renderables.remove(player);
+        player = normalPlayer;
+        renderables.add(player);
     }
 }
