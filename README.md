@@ -20,10 +20,10 @@ The Strategy Pattern is used to implement different chase strategies for each gh
 
 - **Strategy**: `ChaseStrategy`
 - **ConcreteStrategy**:
-  - `BlinkyChaseStrategy`:
-  - `ClydeChaseStrategy`:
-  - `InkyChaseStrategy`:
-  - `PinkyChaseStrategy`:
+  - `BlinkyChaseStrategy`
+  - `ClydeChaseStrategy`
+  - `InkyChaseStrategy`
+  - `PinkyChaseStrategy`
 - **Context**: `GhostImpl`
 
 
