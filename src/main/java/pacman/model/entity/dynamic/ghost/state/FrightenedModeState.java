@@ -36,10 +36,10 @@ public class FrightenedModeState implements GhostModeState {
             ghost.setState(GhostMode.SCATTER);
             ghost.playingRespawn();
             this.timeFrame = MODE_LENGTH;
-            level.incrementGhostStreak();
-            int streak = level.getStreakCount();
-            int base = (int) pow(2, streak);
-            level.incrementScore(base * POINT);
+            level.incrementStreakCount();
+            int streak = level.getNumStreak();
+            int scaling = (int) pow(2, streak);
+            level.incrementScore(scaling * POINT);
         }
     }
     @Override

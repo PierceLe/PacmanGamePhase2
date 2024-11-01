@@ -44,7 +44,7 @@ public class LevelImpl implements Level {
     private List<Renderable> collectables;
     private GhostMode currentGhostMode;
 
-    private int ghostEatenStreak = 0;
+    private int eatenStreak = 0;
 
     public LevelImpl(JSONObject levelConfiguration,
                      Maze maze) {
@@ -89,11 +89,10 @@ public class LevelImpl implements Level {
             }
         }
         for (Ghost ghost : ghosts) {
-            if (ghost.getChaseStrategy() instanceof InkyChaseStrategy) {
-                InkyChaseStrategy inkyChaseStrategy = (InkyChaseStrategy) ghost.getChaseStrategy();
-                inkyChaseStrategy.setBlinkyGhost(ghost);
+            if (ghost.getChaseStrategy() instanceof InkyChaseStrategy inkyChaseStrategy) {
+                inkyChaseStrategy.setBlinkyGhost(blinkyGhost);
             }
-            FrightenedModeState frightenedState = (FrightenedModeState) ghost.getFrightenedState();
+            FrightenedModeState frightenedState = (FrightenedModeState) ghost.getGhostStateRegistry().getGhostState(GhostMode.FRIGHTENED);
             frightenedState.setModeLength(modeLengths.get(GhostMode.FRIGHTENED));
         }
         for (Ghost ghost : this.ghosts) {
@@ -129,8 +128,7 @@ public class LevelImpl implements Level {
         } else {
             if (tickCount == modeLengths.get(currentGhostMode)) {
                 if (currentGhostMode == GhostMode.FRIGHTENED) {
-//                    removeEffectFromPacman();
-                    ghostEatenStreak = 0;
+                    eatenStreak = 0;
                 }
                 // update ghost mode
                 this.currentGhostMode = GhostMode.getNextGhostMode(currentGhostMode);
@@ -196,7 +194,7 @@ public class LevelImpl implements Level {
                 GhostModeState ghostCurrentState = ghost.getCurrentGhostState();
                 ghostCurrentState.collectPowerPellets();
             }
-            ghostEatenStreak = 0;
+            eatenStreak = 0;
             tickCount = 0;
         }
         this.points += collectable.getPoints();
@@ -308,8 +306,8 @@ public class LevelImpl implements Level {
     }
 
     @Override
-    public int getStreakCount() {
-        return ghostEatenStreak;
+    public int getNumStreak() {
+        return eatenStreak;
     }
 
     @Override
@@ -319,8 +317,10 @@ public class LevelImpl implements Level {
     }
 
     @Override
-    public void incrementGhostStreak() {
-        this.ghostEatenStreak += 1;
-        if (ghostEatenStreak == ghosts.size()) ghostEatenStreak = 0;
+    public void incrementStreakCount() {
+        if (eatenStreak == ghosts.size()) {
+            eatenStreak = 0;
+        }
+        this.eatenStreak += 1;
     }
 }

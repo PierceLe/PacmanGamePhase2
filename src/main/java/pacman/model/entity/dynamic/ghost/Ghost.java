@@ -3,6 +3,7 @@ package pacman.model.entity.dynamic.ghost;
 import pacman.model.entity.dynamic.DynamicEntity;
 import pacman.model.entity.dynamic.ghost.chasestrategy.ChaseStrategy;
 import pacman.model.entity.dynamic.ghost.state.GhostModeState;
+import pacman.model.entity.dynamic.ghost.state.StateRegistry;
 import pacman.model.entity.dynamic.physics.Direction;
 import pacman.model.entity.dynamic.physics.KinematicState;
 import pacman.model.entity.dynamic.physics.Vector2D;
@@ -34,7 +35,6 @@ public interface Ghost extends DynamicEntity, PlayerPositionObserver {
 
 
     GhostModeState getCurrentGhostState();
-    GhostModeState getFrightenedState();
     void setState(GhostMode ghostMode);
     Vector2D getTargetLocation();
     void setTargetLocation(Vector2D targetLocation);
@@ -45,4 +45,6 @@ public interface Ghost extends DynamicEntity, PlayerPositionObserver {
     void setCurrentDirection(Direction currentDirection);
     KinematicState getKinematicState();
     void playingRespawn();
+
+    StateRegistry getGhostStateRegistry();
 }

@@ -97,9 +97,9 @@ public interface Level extends LevelStateSubject {
      */
     void handleGameEnd();
 
-    int getStreakCount();
+    int getNumStreak();
 
     void incrementScore(int scoreIncremented);
 
-    void incrementGhostStreak();
+    void incrementStreakCount();
 }

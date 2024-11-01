@@ -84,6 +84,11 @@ public class GhostImpl implements Ghost {
     }
 
     @Override
+    public StateRegistry getGhostStateRegistry() {
+        return ghostStatesRegistry;
+    }
+
+    @Override
     public Vector2D getTargetLocation() {
         return switch (this.ghostMode) {
             case CHASE -> this.playerPosition;
@@ -145,12 +150,6 @@ public class GhostImpl implements Ghost {
     public GhostModeState getCurrentGhostState() {
         return ghostStatesRegistry.getGhostState(currentGhostState);
     }
-
-    @Override
-    public GhostModeState getFrightenedState() {
-        return ghostStatesRegistry.getGhostState(GhostMode.FRIGHTENED);
-    }
-
 
     @Override
     public void setState(GhostMode ghostMode) {
