@@ -210,6 +210,7 @@ public class LevelImpl implements Level {
     @Override
     public void handleLoseLife() {
         if (gameState == GameState.IN_PROGRESS) {
+            deactivatePowerPelletEffect((ConcretePacmanDecorator) player);
             for (DynamicEntity dynamicEntity : getDynamicEntities()) {
                 dynamicEntity.reset();
             }
