@@ -11,9 +11,17 @@ import pacman.model.level.Level;
 
 import java.util.Set;
 
+/**
+ * Base decorator for Pac-Man, extending functionality of the PacmanComponent.
+ */
 public class BasePacmanDecorator implements PacmanComponent, Controllable {
     protected PacmanComponent pacman;
 
+    /**
+     * Constructs a decorator for the given Pacman component.
+     *
+     * @param pacman the Pacman component to decorate
+     */
     public BasePacmanDecorator(PacmanComponent pacman) {
         this.pacman = pacman;
     }

@@ -1,6 +1,5 @@
 package pacman.model.entity.dynamic.ghost.state;
 
-
 import javafx.scene.image.Image;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.ghost.Ghost;
@@ -14,19 +13,41 @@ import java.util.*;
 
 import static pacman.model.entity.dynamic.ghost.GhostImpl.minimumDirectionCount;
 
-
+/**
+ * Represents the state of a ghost, defining its behavior and actions in Frightened mode comparing to another mode (SCATTER).
+ */
 public interface GhostModeState {
+
+    /**
+     * Gets the current image representing the ghost's mode.
+     *
+     * @return ghost image
+     */
     Image getImage();
 
-
+    /**
+     * Handles collision events with other objects in the level.
+     *
+     * @param level      the current game level
+     * @param renderable the object the ghost collides with
+     */
     void handleCollision(Level level, Renderable renderable);
 
-
+    /**
+     * Updates the state of the ghost.
+     */
     void update();
 
+    /**
+     * Collects power pellets, typically to modify ghost behavior.
+     */
     void collectPowerPellets();
 
-
+    /**
+     * Updates the direction of the ghost based on its current location and target.
+     *
+     * @param ghost the ghost whose direction is being updated
+     */
     default void updateDirection(Ghost ghost) {
         // Ghosts update their target location when they reach an intersection
         if (Maze.isAtIntersection(ghost.getPossibleDirections())) {
@@ -50,6 +71,14 @@ public interface GhostModeState {
         }
     }
 
+    /**
+     * Selects the best direction for the ghost to move based on its possible directions
+     * and current target.
+     *
+     * @param possibleDirections the set of possible movement directions
+     * @param ghost              the ghost whose direction is being selected
+     * @return the chosen direction for the ghost
+     */
     default Direction selectDirection(Set<Direction> possibleDirections, Ghost ghost) {
         if (possibleDirections.isEmpty()) {
             return ghost.getCurrentDirection();
@@ -57,7 +86,7 @@ public interface GhostModeState {
         Direction currentDirection = ghost.getCurrentDirection();
         int currentDirectionCount = ghost.getCurrentDirectionCount();
 
-        // ghosts have to continue in a direction for a minimum time before changing direction
+        // Ghosts must continue in a direction for a minimum time before changing direction
         if (currentDirection != null && currentDirectionCount < minimumDirectionCount) {
             ghost.setCurrentDirectionCount(currentDirectionCount + 1);
             return currentDirection;
@@ -65,17 +94,19 @@ public interface GhostModeState {
         Map<Direction, Double> distances = new HashMap<>();
         KinematicState kinematicState = ghost.getKinematicState();
         for (Direction direction : possibleDirections) {
-            // ghosts never choose to reverse travel
+            // Ghosts never choose to reverse travel
             if (currentDirection == null || direction != currentDirection.opposite()) {
-                distances.put(direction, Vector2D.calculateEuclideanDistance(kinematicState.getPotentialPosition(direction), ghost.getTargetLocation()));
+                distances.put(direction, Vector2D.calculateEuclideanDistance(
+                        kinematicState.getPotentialPosition(direction), ghost.getTargetLocation()));
             }
         }
 
-        // only go the opposite way if trapped
+        // Only go the opposite way if trapped
         if (distances.isEmpty()) {
             return currentDirection.opposite();
         }
 
+        // Non-frightened mode aims for the closest target, while frightened mode is random
         if (this instanceof NonFrightenedModeState) {
             return Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
         }

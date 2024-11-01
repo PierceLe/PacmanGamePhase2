@@ -10,7 +10,7 @@ import pacman.model.entity.staticentity.collectable.Pellet;
 import pacman.model.factories.RenderableFactory;
 
 /**
- * Concrete renderable factory for Pellet objects
+ * Concrete renderable factory for Power Pellet objects
  */
 public class PowerPelletFactory implements RenderableFactory {
     private static final Image PELLET_IMAGE = new Image("maze/pellet.png");
